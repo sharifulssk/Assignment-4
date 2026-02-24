@@ -110,28 +110,39 @@ document.addEventListener("click", function(e) {
     }
 });
 
-// Tab Filter
+// ---------filter section
 allBtn.addEventListener("click", () => filterCards("all"));
 interviewTabBtn.addEventListener("click", () => filterCards("interview"));
 rejectedTabBtn.addEventListener("click", () => filterCards("rejected"));
 
+
 function filterCards(type) {
+
     const cards = document.querySelectorAll(".card");
+    const emptyState = document.getElementById("empty-state");
+
+    let count = 0;
 
     cards.forEach(card => {
+
         if (type === "all") {
             card.style.display = "flex";
-        } else {
+            count++;
+        } 
+        else {
             if (card.dataset.status === type) {
                 card.style.display = "flex";
+                count++;
             } else {
                 card.style.display = "none";
             }
         }
+
     });
 
-    updateTabCount(type);
+    emptyState.style.display = count === 0 ? "block" : "none";
 }
+
 
 function updateCounts() {
     interviewCountEl.innerText = interviewCount;
