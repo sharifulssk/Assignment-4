@@ -1,72 +1,26 @@
-const interviewCount = document.getElementById("interview-count");
-const interviewBtn = document.getElementById("interview-btn");
-const interviewBtnCard = document.getElementById("interview-btn2");
-const cardBody = document.getElementById("card-Body");
-const notAppliedBtn = document.getElementById("notAppbtn");
-const rejectedCount = document.getElementById("rejected-count");
-const rejectedBtn = document.getElementById("rejected-btn");
-const rejectedBtnCard = document.getElementById("rejected-btn2");
-const totalCountEle = document.getElementById("totalCount");
-const interviewCountEle = document.getElementById("interview-count");
-const rejectedCountEle = document.getElementById("rejected-count");
-const allJobsCountEle = document.getElementById("allJobsCount");
-const allTabBtn = document.getElementById("all-btn");
+const interviewCountEl = document.getElementById("interview-count");
+const rejectedCountEl = document.getElementById("rejected-count");
+const totalCountEl = document.getElementById("totalCount");
+const allJobsCountEl = document.getElementById("allJobsCount");
+
+const allBtn = document.getElementById("all-btn");
 const interviewTabBtn = document.getElementById("interview-btn");
 const rejectedTabBtn = document.getElementById("rejected-btn");
-const deleteBtn = document.getElementById("delete-btn")
-const allCardsSection = document.getElementById('allCards');
+
+const cardsContainer = document.getElementById("allCards");
 
 
-const filterSection = document.getElementById('filtered-section')
 
-
-let interviewNumber = 0;
-let rejectedNumber = 0;
-
-
-interviewBtnCard.addEventListener("click", function(){
-    interviewNumber++
-    interviewCount.innerText = interviewNumber
-
-    notAppliedBtn.innerHTML = "INTERVIEW";
-    notAppliedBtn.classList.remove("bg-gray-300");
-    notAppliedBtn.classList.add("bg-green-400", "text-white");
-    
-interviewBtn.addEventListener("click", function(){
-    cardBody.style.display = "flex";
-    
-
-})
-})
-
-rejectedBtnCard.addEventListener("click", function () {
-
-   
-    rejectedNumber++;
-    rejectedCount.innerText = rejectedNumber;
-
-    
-    notAppliedBtn.innerText = "REJECTED";
-    notAppliedBtn.classList.remove("bg-gray-300");
-    notAppliedBtn.classList.add("bg-red-400", "text-white");
-
-    
-    rejectedBtn.addEventListener("click", function () {
-        cardBody.style.display = "flex";
-
-    });
-
-});
-
-
+let interviewCount = 0;
+let rejectedCount = 0;
 
 function toggleStyle(id){
 //    remove all btn bg
-    allTabBtn.classList.remove('bg-[#3B82F6]', 'text-white');
+    allBtn.classList.remove('bg-[#3B82F6]', 'text-white');
     interviewTabBtn.classList.remove('bg-[#3B82F6]', 'text-white');
     rejectedTabBtn.classList.remove('bg-[#3B82F6]', 'text-white');
  // adding gray all bg 
-    allTabBtn.classList.add('bg-white', 'text-black');
+    allBtn.classList.add('bg-white', 'text-black');
     interviewTabBtn.classList.add('bg-white', 'text-black');
     rejectedTabBtn.classList.add('bg-white', 'text-black');
 
@@ -94,16 +48,113 @@ function toggleStyle(id){
 
     
 }
+updateCounts();
 
-        // removing the plant from thriving list
-        thrivingList = thrivingList.filter(item => item.plantName != cardInfo.plantName)
+// Interview Button
+document.addEventListener("click", function(e) {
 
-        // console.log(thrivingList);
+    // Interview Click
+    if (e.target.id === "interview-btn2") {
+        const card = e.target.closest(".card");
+        const statusBtn = card.querySelector("#notAppbtn");
 
-        // after remove rerender the html
-        if (currentStatus == "thriving-filter-btn") {
-            renderThriving();
-      
+        if (card.dataset.status === "rejected") {
+            rejectedCount--;
         }
-  
+
+        if (card.dataset.status !== "interview") {
+            interviewCount++;
+        }
+
+        card.dataset.status = "interview";
+        statusBtn.innerText = "INTERVIEW";
+        statusBtn.className = "bg-green-400 px-6 py-3 text-white";
+
+        updateCounts();
+    }
+
+    // Rejected Click
+    if (e.target.id === "rejected-btn2") {
+        const card = e.target.closest(".card");
+        const statusBtn = card.querySelector("#notAppbtn");
+
+        if (card.dataset.status === "interview") {
+            interviewCount--;
+        }
+
+        if (card.dataset.status !== "rejected") {
+            rejectedCount++;
+        }
+
+        card.dataset.status = "rejected";
+        statusBtn.innerText = "REJECTED";
+        statusBtn.className = "bg-red-400 px-6 py-3 text-white";
+
+        updateCounts();
+    }
+
+    // Delete Button
+    if (e.target.closest("#delete-btn")) {
+        const card = e.target.closest(".card");
+
+        if (card.dataset.status === "interview") {
+            interviewCount--;
+        }
+
+        if (card.dataset.status === "rejected") {
+            rejectedCount--;
+        }
+
+        card.remove();
+        updateCounts();
+    }
+});
+
+// Tab Filter
+allBtn.addEventListener("click", () => filterCards("all"));
+interviewTabBtn.addEventListener("click", () => filterCards("interview"));
+rejectedTabBtn.addEventListener("click", () => filterCards("rejected"));
+
+function filterCards(type) {
+    const cards = document.querySelectorAll(".card");
+
+    cards.forEach(card => {
+        if (type === "all") {
+            card.style.display = "flex";
+        } else {
+            if (card.dataset.status === type) {
+                card.style.display = "flex";
+            } else {
+                card.style.display = "none";
+            }
+        }
+    });
+
+    updateTabCount(type);
+}
+
+function updateCounts() {
+    interviewCountEl.innerText = interviewCount;
+    rejectedCountEl.innerText = rejectedCount;
+
+    const totalCards = document.querySelectorAll(".card").length;
+    totalCountEl.innerText = totalCards;
+    allJobsCountEl.innerHTML = `<p>${totalCards} jobs</p>`;
+}
+
+function updateTabCount(type) {
+    let count = 0;
+    const cards = document.querySelectorAll(".card");
+
+    cards.forEach(card => {
+        if (type === "all") {
+            count++;
+        } else if (card.dataset.status === type) {
+            count++;
+        }
+    });
+
+    allJobsCountEl.innerHTML = `<p>${count} jobs</p>`;
+}
+
 
