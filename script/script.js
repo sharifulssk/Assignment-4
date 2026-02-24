@@ -95,4 +95,15 @@ function toggleStyle(id){
     
 }
 
+        // removing the plant from thriving list
+        thrivingList = thrivingList.filter(item => item.plantName != cardInfo.plantName)
+
+        // console.log(thrivingList);
+
+        // after remove rerender the html
+        if (currentStatus == "thriving-filter-btn") {
+            renderThriving();
+      
+        }
+  
 
